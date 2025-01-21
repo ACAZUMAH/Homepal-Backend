@@ -5,3 +5,9 @@ node_modules
 
 #compiled code 
 /dist
+
+#error logs
+error.log
+
+#combine logs
+combine.log
