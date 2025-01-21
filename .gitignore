@@ -1,0 +1,7 @@
+#environment varables 
+.env
+#node modules 
+node_modules
+
+#compiled code 
+/dist
