@@ -5,6 +5,7 @@ import { connectDB } from '../common/helpers/connectDB';
 import { logger } from '../logger/logger';
 import { errorHandler } from '../Middlewares/error-handler';
 import createError from 'http-errors'
+import { applyRouters } from 'src/routers';
 
 
 const PORT = process.env.PORT || 3000
@@ -15,7 +16,9 @@ const startServer = async () => {
 
     const httpServer = http.createServer(app);
 
-    connectDB(`${process.env.MONGO_URI}`)
+    await connectDB(`${process.env.MONGO_URI}`)
+
+    applyRouters(app)
 
     app.use(errorHandler)
 
