@@ -21,9 +21,21 @@ const createAccountSchema = {
     type: 'object',
 
     properties: {
-        username: { type: "string" },
+        username: { 
+            type: "string",
+            minLength: 3,
+            errorMessage: {
+                minLength: 'username must be at least 3 characters'
+            } 
+        },
         phone: { type: 'string', format: 'phone' },
-        password: { type: 'string' }
+        password: { 
+            type: 'string',
+            minLength: 6,
+            errorMessage: {
+                minLength: 'password must be at least 6 characters'
+            }
+        }
     },
 
     required: ['username', 'phone', 'password'],

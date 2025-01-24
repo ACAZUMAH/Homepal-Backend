@@ -9,10 +9,10 @@ const listingSchema = new mongoose.Schema<listingDocument>({
     discountPrice: { type: Number, required: true },
     bathrooms: { type: Number, required: true },
     bedrooms: { type: Number, required: true  },
-    furnished: { type: Boolean, required: true },
-    parking: { type: Boolean, required: true },
+    furnished: { type: Boolean, required: true, default: false },
+    parking: { type: Boolean, required: true, default: false },
     type: { type: String, required: true },
-    offer: { type: Boolean, required: true },
+    offer: { type: Boolean, required: true, default: false },
     imageUrls: [{ type: String, required: true  }],
     userRef: { type: String, ref: 'users', required: true }
 },{ timestamps: true });
