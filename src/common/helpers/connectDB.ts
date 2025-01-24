@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { logger } from "../../logger/logger";
 
-export const connectDB = (url: string) => {
+export const connectDB = async (url: string) => {
   mongoose.connection.on("connected", () => {
     logger.info("Connected to batabase");
   });

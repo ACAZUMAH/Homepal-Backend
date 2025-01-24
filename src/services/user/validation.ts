@@ -1,11 +1,13 @@
 import Ajv from "ajv";
 import addFormat from 'ajv-formats'
+import addErrors from 'ajv-errors'
 import { createUserInput } from "src/common/interfaces";
 import createError from 'http-errors'
 
-const ajv = new Ajv()
+const ajv = new Ajv({ allErrors: true })
 
 addFormat(ajv)
+addErrors(ajv)
 
 ajv.addFormat('phone', {
     type: 'string',
