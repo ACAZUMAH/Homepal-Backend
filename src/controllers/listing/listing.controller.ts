@@ -16,8 +16,8 @@ import createError from 'http-errors';
  */
 export const createNewListing = async (req: Request, res: Response) => {
     const { user } = req
-    const listing = await createListing({ userRef: user?._id, ...req.body })
-    return constructHttpResponse(listing, null, 201)
+    const listing = await createListing({ userRef: String(user?._id), ...req.body })
+    return constructHttpResponse(listing, null, 201)(res)
 };
 
 /**
@@ -49,7 +49,7 @@ export const findListings = async (req: Request, res: Response) => {
  * @param res 
  */
 export const getUpdateListing = async (req: Request, res: Response) => {
-    const updated = await updateListing({ ...req.body })
+    const updated = await updateListing({ id: req.params.id, ...req.body })
     return constructHttpResponse(updated)(res)               
 };
 
@@ -59,7 +59,7 @@ export const getUpdateListing = async (req: Request, res: Response) => {
  * @param res 
  */
 export const deleteListing = async  (req: Request, res: Response) => {
-    const deleted = await deleteListingById(req.params.id)
+    const deleted = await deleteListingById(req.params.id);
     if(!deleted) throw createError.NotFound('Unable to delete user')
     return constructHttpResponse('Listing deleted successfully')(res)
 };

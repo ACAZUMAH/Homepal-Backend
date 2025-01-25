@@ -5,7 +5,7 @@ import listingRouter from './listing/listing.router';
 
 const routes: { path: string, route: Router }[] = [
     {
-        path: '/',
+        path: '',
         route: listingRouter
     },
     {

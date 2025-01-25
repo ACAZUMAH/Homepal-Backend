@@ -1,18 +1,17 @@
 import { Router } from "express";
-import { createNewListing, findListing, findListings, getUpdateListing } from "../../controllers";
+import { createNewListing, findListing, findListings, getUpdateListing, deleteListing } from "../../controllers";
 import { verifyAccessToken } from "../../Middlewares/verify-token";
-import { deleteListingById } from "src/services/listing";
 
 const router = Router();
 
-router.post('listing', verifyAccessToken ,createNewListing);
+router.post('/listing', verifyAccessToken ,createNewListing);
 
-router.get('listings', findListings);
+router.get('/listings', findListings);
 
-router.get('listing/:id', findListing);
+router.get('/listing/:id', findListing);
 
-router.put('listing/:id', verifyAccessToken, getUpdateListing);
+router.put('/listing/:id', verifyAccessToken, getUpdateListing);
 
-router.delete('listing/:id', verifyAccessToken, deleteListingById);
+router.delete('/listing/:id', verifyAccessToken, deleteListing);
 
 export default router;

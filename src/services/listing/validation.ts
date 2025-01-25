@@ -3,7 +3,7 @@ import addErrors from "ajv-errors";
 import createError from "http-errors";
 import { createListingInput, updateListingInput } from "../../common/interfaces/listing";
 
-const ajv = new Ajv();
+const ajv = new Ajv({ allErrors: true });
 
 addErrors(ajv);
 
@@ -53,11 +53,7 @@ const createListingSchema = {
     offer: { type: "boolean" },
     imageUrls: {
       type: "array",
-      items: { types: "string" },
-      minimum: 1,
-      errorMessage: {
-        minimum: "images must be at least 1",
-      },
+      items: { type: "string" },
     },
     userRef: { type: "string" },
   },
