@@ -1,4 +1,4 @@
-import { createUserInput, updateUserInput } from "../../common/interfaces";
+import { upsertUserInput, updateUserInput } from "../../common/interfaces";
 import { userModel } from "../../models";
 import { validateCreateUser } from "./validation";
 import createError from 'http-errors'
@@ -10,14 +10,47 @@ import { Types } from "mongoose";
  * @returns created user 
  * @throws server error if user is not created
  */
-export const createUser = async (data:createUserInput) => {
+export const createUser = async (data: upsertUserInput) => {
     validateCreateUser(data);
-
     const user = await userModel.create({ ...data });
     if(!user) throw createError.InternalServerError('Unable to create user');
-
     return user;
 };
+
+/**
+ * upsert user on login
+ * @param data - user info
+ * @returns upserted data
+ */
+export const upsertUser = (data: upsertUserInput) => {
+    const upsertData: Record<string, any> = {
+        phoneNumber: data.phoneNumber
+    }
+
+    if(data.email) {
+        upsertData.email = data.email
+    }
+
+    if(data.firstname){
+        upsertData.firstName = data.firstname
+    }
+
+    if(data.lastName){
+        upsertData.lastName = data.lastName
+    }
+
+    if(data.profile){
+        upsertData.profile = data.profile
+    }
+
+    return userModel.findOneAndUpdate(
+        { phoneNumber: data.phoneNumber },
+        { 
+            $set: upsertData
+        },
+        { new: true, upsert: true }
+    )
+}
 
 /**
  * check if user exist already
@@ -96,7 +129,6 @@ export const updateUser = async (data: updateUserInput) => {
  */
 export const deleteUser = async (id: string | Types.ObjectId) => {
     if(!Types.ObjectId.isValid(id)) throw createError.BadRequest('Invalid user id')
-
-    const user = await userModel.findByIdAndDelete({ _id: id })
+    const user = await userModel.findByIdAndDelete({ _id: id }) 
     return user;
 };
