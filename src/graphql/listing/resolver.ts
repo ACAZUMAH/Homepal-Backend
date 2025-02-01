@@ -1,4 +1,4 @@
-import { MutationCreateListingArgs, MutationDeleteListingArgs, MutationUpdateListingArgs, QueryGetListingArgs, QueryGetListingsArgs } from "src/common/graphql/graphql"
+import { Listing, MutationCreateListingArgs, MutationDeleteListingArgs, MutationUpdateListingArgs, QueryGetListingArgs, QueryGetListingsArgs } from "src/common/graphql/graphql"
 import { GrapghqlContext } from "src/common/interfaces"
 import * as service from '../../services/listing'
 
@@ -22,6 +22,10 @@ const deleteListing = (_: any, { id }: MutationDeleteListingArgs) => {
     return service.deleteListingById(id)
 }
 
+const user = (parent: Listing, _: any, { userLoader }: GrapghqlContext) => {
+    return parent.userRef ? userLoader.load(parent.userRef.toString()) : null
+}
+
 export const listingResoler = {
     Query: {
         getListing,
@@ -31,5 +35,8 @@ export const listingResoler = {
         createListing,
         updateListing,
         deleteListing
+    },
+    Listing: {
+        user
     }
 }

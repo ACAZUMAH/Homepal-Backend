@@ -16,7 +16,8 @@ export const listingTypeDef = `#graphql
         mode: Mode!
         amenities: [String!]!
         imageUrls: [String!]!
-        userRef: String
+        userRef: String!
+        user: User!
     }
 
     input listingFilter {

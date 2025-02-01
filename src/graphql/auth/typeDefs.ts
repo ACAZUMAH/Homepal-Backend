@@ -9,7 +9,7 @@ export const authTypeDefs = `#graphql
     }
 
     extend type Mutation {
-        loginWithPhoneNumber(phoneNumber: String!): LoginResponse!
+        loginWithPhoneNumber(phoneNumber: PhoneNumber!): LoginResponse!
         completeAuthAndGenerateToken(token: String!): Authenticated!
     }
 `;

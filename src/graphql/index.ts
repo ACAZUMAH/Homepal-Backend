@@ -7,19 +7,22 @@ import { userTypeDefs } from "./user";
 import { userResolvers } from "./user/resolvers";
 import { authTypeDefs } from "./auth/typeDefs";
 import { authResolvers } from "./auth/resolvers";
+import { typeDefs as scalarTypeDef, resolvers as scalarResolvers } from 'graphql-scalars'
 
 const typeDefs = [
     generalTypeDef,
     authTypeDefs,
     userTypeDefs,
     listingTypeDef,
+    scalarTypeDef
 ]
 
 const resolvers = [
     generalResolvers,
     authResolvers,
     userResolvers,
-    listingResoler
+    listingResoler,
+    scalarResolvers
 ]
 
 export const schema = mergeSchemas({typeDefs, resolvers})

@@ -1,4 +1,4 @@
-import { upsertUserInput, updateUserInput } from "../../common/interfaces";
+import { upsertUserInput, updateUserInput, favorite } from "../../common/interfaces";
 import { userModel } from "../../models";
 import { validateCreateUser } from "./validation";
 import createError from 'http-errors'
@@ -27,21 +27,13 @@ export const upsertUser = (data: upsertUserInput) => {
         phoneNumber: data.phoneNumber
     }
 
-    if(data.email) {
-        upsertData.email = data.email
-    }
+    if(data.email)  upsertData.email = data.email;
 
-    if(data.firstname){
-        upsertData.firstName = data.firstname
-    }
+    if(data.firstname) upsertData.firstName = data.firstname;
 
-    if(data.lastName){
-        upsertData.lastName = data.lastName
-    }
+    if(data.lastName) upsertData.lastName = data.lastName;
 
-    if(data.profile){
-        upsertData.profile = data.profile
-    }
+    if(data.profile) upsertData.profile = data.profile;
 
     return userModel.findOneAndUpdate(
         { phoneNumber: data.phoneNumber },
@@ -58,8 +50,7 @@ export const upsertUser = (data: upsertUserInput) => {
  * @throws 400 error if user exist
  */
 export const checkUserExist = async (phone: string) => {
-    if(await userModel.exists({ phone }))
-        throw createError.BadRequest('User exist login')
+    if(await userModel.exists({ phone })) throw createError.BadRequest('User exist login')
 };
 
 /**
@@ -132,3 +123,37 @@ export const deleteUser = async (id: string | Types.ObjectId) => {
     const user = await userModel.findByIdAndDelete({ _id: id }) 
     return user;
 };
+
+/**
+ * add property to favorites
+ * @param data - userId and propertyId
+ * @returns updated user
+ * @throws 400 error if user Id is invalid
+ * @throws 404 error if User not found
+ */
+export const addTofavoriteProperty = async (data: favorite) => {
+    const { id, propertyId } = data
+    const user = await getUserById(id)
+
+    return await userModel.findByIdAndUpdate(
+        { _id: user._id },
+        { $push: { 'favoriteProperties.propertyIds': propertyId } },
+        { new: true }
+    )
+}
+
+/**
+ * 
+ * @param data 
+ * @returns 
+ */
+export const removeFavoriteProperty = async (data: favorite) => {
+    const { id, propertyId } = data
+    const user = await getUserById(id)
+
+    return await userModel.findByIdAndUpdate(
+        { _id: user._id },
+        { $pull: { 'favoriteProperties.propertyIds': propertyId } },
+        { new: true }
+    )
+}

@@ -1,5 +1,7 @@
 import { createListingLoader } from "./listing";
+import { createUserLoader } from "./user";
 
 export const createDataLoaders = () => ({
-    listingLoader: createListingLoader()
+    listingLoader: createListingLoader(),
+    userLoader: createUserLoader()
 })
