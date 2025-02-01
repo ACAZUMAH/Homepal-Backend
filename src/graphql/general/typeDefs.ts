@@ -1,4 +1,11 @@
-export const generalTypeDef = `#graphql 
+export const generalTypeDef = `#graphql
+    type PageInfo {
+        page: Int!
+        total: Int!
+        limit: Int!
+        hasNextPage: Boolean!
+    }
+    
     type Query {
         _empty: String
         hello: String

@@ -1,22 +1,21 @@
 export const userTypeDefs = `#graphql 
     type User {
        id: String!
-       username: String!
-       firstName: String!
-       lastName: String!
-       phone: String!
-       email: String!
-       profile: String!
+       firstName: String
+       lastName: String
+       phoneNumber: String!
+       email: String
+       profile: String
        isAuthenticated: Boolean
-       lisitngs: Listing
+       Listings: Listing
     }
 
-    type Query {
+    extend type Query {
        me: User!
        user(id: ID!): User!
     }
 
-    input updateUserInput{
+    input UpdateUserInput{
        firstName: String
        lastName: String
        phone: String
@@ -24,7 +23,7 @@ export const userTypeDefs = `#graphql
        profile: String
     }
 
-    type Mutation {
-       updateUser(data: updateUserInput): User!
+    extend type Mutation {
+       updateUser(data: UpdateUserInput): User!
     }
 `;

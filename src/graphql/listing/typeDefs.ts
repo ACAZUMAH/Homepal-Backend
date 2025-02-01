@@ -8,7 +8,7 @@ export const listingTypeDef = `#graphql
         id: ID!
         name: String!
         description: String!
-        adress: String!
+        address: String!
         price: Float!
         bathrooms: Int!
         bedrooms: Int!
@@ -16,10 +16,10 @@ export const listingTypeDef = `#graphql
         mode: Mode!
         amenities: [String!]!
         imageUrls: [String!]!
-        userRef: String!
+        userRef: String
     }
 
-    input filter {
+    input listingFilter {
         page: Int 
         limit: Int 
         name: String
@@ -31,11 +31,21 @@ export const listingTypeDef = `#graphql
         type: String
         mode: Mode
         amenities: [String]  
+        search: String
     }
 
-    type Query {
+    type listingConnection {
+        edges: [Listing]!
+        PageInfo: PageInfo!
+    }
+
+    type deleteResponse {
+        message: String
+    }
+
+    extend type Query {
         getListing(id: ID!): Listing!
-        getListings(filter: filter): [Listing!]
+        getListings(filter: listingFilter): listingConnection
     }
 
     input createListingInput {
@@ -60,14 +70,14 @@ export const listingTypeDef = `#graphql
         bathrooms: Int
         bedrooms: Int
         type: String
-        mode: Mode!
+        mode: Mode
         amenities: [String]
         imageUrls: [String]
     }
 
-    type Mutation {
+    extend type Mutation {
         createListing(data: createListingInput): Listing!
         updateListing(data: updateListingInput): Listing!
-        deleteListing(id: ID!): Listing
+        deleteListing(id: ID!): deleteResponse
     }
 `;

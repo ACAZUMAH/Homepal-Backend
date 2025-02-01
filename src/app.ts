@@ -15,6 +15,8 @@ const PORT = process.env.PORT || 3000;
 const startServer = async () => {
   const app = createExpressApp();
 
+  await connectDB(`${process.env.MONGO_URI}`);
+
   const httpServer = http.createServer(app);
 
   applyMiddlewares(app);
@@ -22,8 +24,6 @@ const startServer = async () => {
   //applyRouters(app);
 
   await createGraphqlServer({ app, schema, httpServer })
-
-  await connectDB(`${process.env.MONGO_URI}`);
 
   app.use(errorHandler);
 

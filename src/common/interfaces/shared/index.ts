@@ -14,7 +14,7 @@ declare global {
     }
 }
 
-export interface grapghqlServer {
+export interface GrapghqlServer {
     app: Express,
     httpServer: Server
     schema: GraphQLSchema
@@ -26,7 +26,7 @@ export interface GrapghqlContext extends BaseContext, DataloaderMap {
     token?: string
 }
 
-export interface grapghqlSubscriptionServer {
+export interface GrapghqlSubscriptionServer {
     httpServer: Server
     schema: GraphQLSchema
 }

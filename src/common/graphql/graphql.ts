@@ -16,9 +16,15 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Authenticated = {
+  __typename?: 'Authenticated';
+  token?: Maybe<Scalars['String']['output']>;
+  user: User;
+};
+
 export type Listing = {
   __typename?: 'Listing';
-  adress: Scalars['String']['output'];
+  address: Scalars['String']['output'];
   amenities: Array<Scalars['String']['output']>;
   bathrooms: Scalars['Int']['output'];
   bedrooms: Scalars['Int']['output'];
@@ -29,7 +35,12 @@ export type Listing = {
   name: Scalars['String']['output'];
   price: Scalars['Float']['output'];
   type: Scalars['String']['output'];
-  userRef: Scalars['String']['output'];
+  userRef?: Maybe<Scalars['String']['output']>;
+};
+
+export type LoginResponse = {
+  __typename?: 'LoginResponse';
+  message: Scalars['String']['output'];
 };
 
 export enum Mode {
@@ -40,10 +51,17 @@ export enum Mode {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']['output']>;
+  completeAuthAndGenerateToken: Authenticated;
   createListing: Listing;
-  deleteListing?: Maybe<Listing>;
+  deleteListing?: Maybe<DeleteResponse>;
+  loginWithPhoneNumber: LoginResponse;
   updateListing: Listing;
   updateUser: User;
+};
+
+
+export type MutationCompleteAuthAndGenerateTokenArgs = {
+  token: Scalars['String']['input'];
 };
 
 
@@ -57,6 +75,11 @@ export type MutationDeleteListingArgs = {
 };
 
 
+export type MutationLoginWithPhoneNumberArgs = {
+  phoneNumber: Scalars['String']['input'];
+};
+
+
 export type MutationUpdateListingArgs = {
   data?: InputMaybe<UpdateListingInput>;
 };
@@ -66,11 +89,19 @@ export type MutationUpdateUserArgs = {
   data?: InputMaybe<UpdateUserInput>;
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  hasNextPage: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
   getListing: Listing;
-  getListings?: Maybe<Array<Listing>>;
+  getListings?: Maybe<ListingConnection>;
   hello?: Maybe<Scalars['String']['output']>;
   me: User;
   user: User;
@@ -83,7 +114,7 @@ export type QueryGetListingArgs = {
 
 
 export type QueryGetListingsArgs = {
-  filter?: InputMaybe<Filter>;
+  filter?: InputMaybe<ListingFilter>;
 };
 
 
@@ -96,17 +127,24 @@ export type Subscription = {
   _empty?: Maybe<Scalars['String']['output']>;
 };
 
+export type UpdateUserInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  profile?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type User = {
   __typename?: 'User';
-  email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
+  Listings?: Maybe<Listing>;
+  email?: Maybe<Scalars['String']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   isAuthenticated?: Maybe<Scalars['Boolean']['output']>;
-  lastName: Scalars['String']['output'];
-  lisitngs?: Maybe<Listing>;
-  phone: Scalars['String']['output'];
-  profile: Scalars['String']['output'];
-  username: Scalars['String']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  phoneNumber: Scalars['String']['output'];
+  profile?: Maybe<Scalars['String']['output']>;
 };
 
 export type CreateListingInput = {
@@ -122,7 +160,18 @@ export type CreateListingInput = {
   type: Scalars['String']['input'];
 };
 
-export type Filter = {
+export type DeleteResponse = {
+  __typename?: 'deleteResponse';
+  message?: Maybe<Scalars['String']['output']>;
+};
+
+export type ListingConnection = {
+  __typename?: 'listingConnection';
+  PageInfo: PageInfo;
+  edges: Array<Maybe<Listing>>;
+};
+
+export type ListingFilter = {
   adress?: InputMaybe<Scalars['String']['input']>;
   amenities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   bathrooms?: InputMaybe<Scalars['Int']['input']>;
@@ -133,6 +182,7 @@ export type Filter = {
   name?: InputMaybe<Scalars['String']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
   price?: InputMaybe<Scalars['Float']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -144,18 +194,10 @@ export type UpdateListingInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   imageUrls?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  mode: Mode;
+  mode?: InputMaybe<Mode>;
   name?: InputMaybe<Scalars['String']['input']>;
   price?: InputMaybe<Scalars['Float']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type UpdateUserInput = {
-  email?: InputMaybe<Scalars['String']['input']>;
-  firstName?: InputMaybe<Scalars['String']['input']>;
-  lastName?: InputMaybe<Scalars['String']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
-  profile?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -229,43 +271,59 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Authenticated: ResolverTypeWrapper<Authenticated>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Listing: ResolverTypeWrapper<Listing>;
+  LoginResponse: ResolverTypeWrapper<LoginResponse>;
   Mode: Mode;
   Mutation: ResolverTypeWrapper<{}>;
+  PageInfo: ResolverTypeWrapper<PageInfo>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Subscription: ResolverTypeWrapper<{}>;
+  UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
   createListingInput: CreateListingInput;
-  filter: Filter;
+  deleteResponse: ResolverTypeWrapper<DeleteResponse>;
+  listingConnection: ResolverTypeWrapper<ListingConnection>;
+  listingFilter: ListingFilter;
   updateListingInput: UpdateListingInput;
-  updateUserInput: UpdateUserInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Authenticated: Authenticated;
   Boolean: Scalars['Boolean']['output'];
   Float: Scalars['Float']['output'];
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Listing: Listing;
+  LoginResponse: LoginResponse;
   Mutation: {};
+  PageInfo: PageInfo;
   Query: {};
   String: Scalars['String']['output'];
   Subscription: {};
+  UpdateUserInput: UpdateUserInput;
   User: User;
   createListingInput: CreateListingInput;
-  filter: Filter;
+  deleteResponse: DeleteResponse;
+  listingConnection: ListingConnection;
+  listingFilter: ListingFilter;
   updateListingInput: UpdateListingInput;
-  updateUserInput: UpdateUserInput;
+};
+
+export type AuthenticatedResolvers<ContextType = any, ParentType extends ResolversParentTypes['Authenticated'] = ResolversParentTypes['Authenticated']> = {
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ListingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Listing'] = ResolversParentTypes['Listing']> = {
-  adress?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   amenities?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   bathrooms?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   bedrooms?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -276,22 +334,37 @@ export type ListingResolvers<ContextType = any, ParentType extends ResolversPare
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  userRef?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userRef?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LoginResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResponse'] = ResolversParentTypes['LoginResponse']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  completeAuthAndGenerateToken?: Resolver<ResolversTypes['Authenticated'], ParentType, ContextType, RequireFields<MutationCompleteAuthAndGenerateTokenArgs, 'token'>>;
   createListing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, Partial<MutationCreateListingArgs>>;
-  deleteListing?: Resolver<Maybe<ResolversTypes['Listing']>, ParentType, ContextType, RequireFields<MutationDeleteListingArgs, 'id'>>;
+  deleteListing?: Resolver<Maybe<ResolversTypes['deleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteListingArgs, 'id'>>;
+  loginWithPhoneNumber?: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationLoginWithPhoneNumberArgs, 'phoneNumber'>>;
   updateListing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, Partial<MutationUpdateListingArgs>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateUserArgs>>;
+};
+
+export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  limit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   getListing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, RequireFields<QueryGetListingArgs, 'id'>>;
-  getListings?: Resolver<Maybe<Array<ResolversTypes['Listing']>>, ParentType, ContextType, Partial<QueryGetListingsArgs>>;
+  getListings?: Resolver<Maybe<ResolversTypes['listingConnection']>, ParentType, ContextType, Partial<QueryGetListingsArgs>>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
@@ -302,23 +375,38 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  Listings?: Resolver<Maybe<ResolversTypes['Listing']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   isAuthenticated?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  lisitngs?: Resolver<Maybe<ResolversTypes['Listing']>, ParentType, ContextType>;
-  phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  profile?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phoneNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeleteResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['deleteResponse'] = ResolversParentTypes['deleteResponse']> = {
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ListingConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['listingConnection'] = ResolversParentTypes['listingConnection']> = {
+  PageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  edges?: Resolver<Array<Maybe<ResolversTypes['Listing']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
+  Authenticated?: AuthenticatedResolvers<ContextType>;
   Listing?: ListingResolvers<ContextType>;
+  LoginResponse?: LoginResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  PageInfo?: PageInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  deleteResponse?: DeleteResponseResolvers<ContextType>;
+  listingConnection?: ListingConnectionResolvers<ContextType>;
 };
 

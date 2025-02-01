@@ -7,16 +7,16 @@ import createError from 'http-errors'
 export const verifyAccessToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const bearerHeader = req.headers['authorization']
-        if(!bearerHeader) return next(createError(403, 'Forbidden'));
+        if(!bearerHeader) return next();
 
         const bearer = bearerHeader?.split(' ')
         const bearerToken = bearer.length > 1 ? bearer[1] : bearer[0]
 
-        if(!bearerToken) return next(createError(401, 'Unauthorized'));
+        if(!bearerToken) return next();
 
         const data = jwtVerify(bearerToken)
 
-        if(!data?.id) return next(createError(401, 'Unauthorized'))
+        if(!data?.id) return next()
 
         const user: userDocument = await getUserById(data?.id)
 

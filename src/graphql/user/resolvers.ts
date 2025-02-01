@@ -1,6 +1,6 @@
 import { GrapghqlContext } from "src/common/interfaces"
 import * as services from "../../services/user"
-import { MutationUpdateUserArgs, QueryUserArgs } from "src/common/graphql/graphql"
+import { MutationUpdateUserArgs, QueryUserArgs, User } from "src/common/graphql/graphql"
 
 const me = (_:any, __: any, { user }: GrapghqlContext) => {
     return services.getUserById(user?._id!)

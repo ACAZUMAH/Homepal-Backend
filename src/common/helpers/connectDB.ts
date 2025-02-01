@@ -14,5 +14,5 @@ export const connectDB = async (url: string) => {
     logger.error("database disconnected");
   });
 
-  mongoose.connect(url, {});
+  return mongoose.connect(url, {});
 };
