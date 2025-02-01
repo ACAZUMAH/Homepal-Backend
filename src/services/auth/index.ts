@@ -16,7 +16,10 @@ export const createAuth = async (userId: Types.ObjectId, len: number) => {
         otp = generateOTP(len)
     };
     const expiresIn = new Date(Date.now() + 1 * 60 * 60 * 1000)
-    await authModel.findOneAndUpdate({ userId }, { userId, token: otp, expiresIn}, { upsert: true })
+    await authModel.findOneAndUpdate(
+        { userId }, 
+        { userId, token: otp, expiresIn}, 
+        { new: true, upsert: true })
     return otp
 };
 

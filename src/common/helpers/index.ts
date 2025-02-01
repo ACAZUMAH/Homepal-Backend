@@ -5,26 +5,6 @@ import jwt from 'jsonwebtoken'
 
 /**
  * 
- * @param password 
- * @returns 
- */
-export const hashPassword = async (password: string) => {
-    const saltRounds = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, saltRounds);
-}
-
-/**
- * 
- * @param hash 
- * @param password 
- * @returns 
- */
-export const comparePassword = async (hash: string, password: string) => {
-    return await bcrypt.compare(password, hash)
-}
-
-/**
- * 
  * @param obj 
  * @returns 
  */
@@ -81,8 +61,8 @@ export const getSanitizeOffset = (limit: number, page: number) => {
 export const getPageConnection = <T>(data: Array<T>, page: number, limit: number) => {
     const hasNextPage = data.length > limit 
     const edges = hasNextPage ? data.slice(0, limit) : data
-    const pageInfo = { page, limit, total: data.length, hasNextPage }
-    return { edges, pageInfo }
+    const PageInfo = { page, limit, total: data.length, hasNextPage }
+    return { edges, PageInfo }
 }
 
 /**

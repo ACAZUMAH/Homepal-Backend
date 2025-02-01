@@ -1,28 +1,36 @@
 import { Types } from "mongoose";
+import { favoriteProperties } from "../favorite";
 
 export interface userDocument {
     _id: Types.ObjectId
-    username: string 
     firstName: string
     lastName: string
-    phone: string 
+    phoneNumber: string 
     email: string 
-    password?: string
     profile?: string 
     isAuthenticated?: boolean
+
+    favoriteProperties: favoriteProperties
 }
 
-export interface createUserInput {
-    username: string 
-    phone: string 
-    password: string 
+export interface upsertUserInput {
+  phoneNumber: string;
+  firstname?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  profile?: string | null;
 }
 
 export interface updateUserInput {
     id: Types.ObjectId
-    firstName?: string
-    lastName?: string
-    email?: string 
-    profile?: string 
+    firstName?: string | null
+    lastName?: string | null
+    email?: string | null
+    profile?: string | null
+}
+
+export interface favorite {
+  id: string | Types.ObjectId
+  propertyId: string | Types.ObjectId
 }
 

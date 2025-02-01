@@ -55,23 +55,20 @@ export const getListings = async (filter: listingFilter) => {
   const query: FilterQuery<listingDocument> = {
     ...(filter.userRef && { userRef: filter.userRef }),
     ...(filter.name && { name: filter.name }),
-    ...(filter.regularPrice && { regularPrice: filter.regularPrice }),
-    ...(filter.discountPrice && { discountPrice: filter.discountPrice }),
+    ...(filter.price && { regularPrice: filter.price }),
     ...(filter.bedrooms && { bedrooms: filter.bedrooms }),
     ...(filter.bathrooms && { bathrooms: filter.bathrooms }),
-    ...(filter.furnished && { furnished: filter.furnished }),
-    ...(filter.parking && { parking: filter.parking }),
-    ...(filter.offer && {
-      $or: [{ offer: filter.offer }, { offer: { $in: [false, true] } }],
+    ...(filter.type && { type: filter.type }),
+    ...(filter.mode && {
+      $or: [{ type: filter.mode }, { type: { $in: ["RENT", "SALE"] } }],
     }),
-    ...(filter.type && {
-      $or: [{ type: filter.type }, { type: { $in: ["rent", "sale"] } }],
-    }),
+    ...(filter.amenities && { amenities: filter.amenities }),
     ...(filter.search && {
       $or: [
         { description: { $regex: filter.search, $options: "i" } },
         { name: { $regex: filter.search, $options: "i" } },
         { address: { $regex: filter.search, $options: "i" } },
+        { type: { $regex: filter.search, $options: 'i' } }
       ],
     }),
   };
@@ -106,19 +103,17 @@ export const updateListing = async (data: updateListingInput) => {
         ...(data.name && { name: data.name }),
         ...(data.description && { description: data.description }),
         ...(data.address && { address: data.address }),
-        ...(data.regularPrice && { regularPrice: data.regularPrice }),
-        ...(data.discountPrice && { discountPrice: data.discountPrice }),
+        ...(data.price && { regularPrice: data.price }),
         ...(data.bathrooms && { bathrooms: data.bathrooms }),
         ...(data.bedrooms && { bedrooms: data.bedrooms }),
-        ...(data.furnished && { furnished: data.furnished }),
-        ...(data.parking && { parking: data.parking }),
         ...(data.type && { type: data.type }),
-        ...(data.offer && { offer: data.offer }),
-        ...(data.imageUrls && { imageUrls: data.imageUrls })
+        ...(data.mode && { mode: data.mode }),
+        ...(data.amenities && data.amenities.length > 0 && { amenities: data.amenities }),
+        ...(data.imageUrls && data.imageUrls.length > 0 && { imageUrls: data.imageUrls })
     };
 
     return await listingModel.findByIdAndUpdate(
-        { _id: listing._id },
+        { _id: listing._id, userRef: data.userRef },
         { $set: updateData },
         { new: true }
     );
@@ -135,5 +130,7 @@ export const deleteListingById = async (id: string | Types.ObjectId) => {
     
     const listing = await listingModel.findByIdAndDelete({ _id: id })
 
-    return listing
+    if(!listing) throw createError.NotFound("Unable to delete")
+    
+    return 'succesfully deleted'
 };
