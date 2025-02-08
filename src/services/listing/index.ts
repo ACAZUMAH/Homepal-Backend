@@ -55,14 +55,13 @@ export const getListings = async (filter: listingFilter) => {
   const query: FilterQuery<listingDocument> = {
     ...(filter.userRef && { userRef: filter.userRef }),
     ...(filter.name && { name: filter.name }),
-    ...(filter.price && { regularPrice: filter.price }),
+    ...(filter.price && { price: filter.price }),
     ...(filter.bedrooms && { bedrooms: filter.bedrooms }),
     ...(filter.bathrooms && { bathrooms: filter.bathrooms }),
     ...(filter.type && { type: filter.type }),
-    ...(filter.mode && {
-      $or: [{ type: filter.mode }, { type: { $in: ["RENT", "SALE"] } }],
-    }),
+    ...(filter.mode && { mode: filter.mode }),
     ...(filter.amenities && { amenities: filter.amenities }),
+    ...(filter.address && { address: filter.address }),
     ...(filter.search && {
       $or: [
         { description: { $regex: filter.search, $options: "i" } },
@@ -81,7 +80,7 @@ export const getListings = async (filter: listingFilter) => {
     skip,
     lean: true,
     limit: limit + 1,
-    sort: { createdAt: filter.sort === "latest" ? -1 : 1 },
+    sort: { createdAt: filter.sort === "Newest" ? -1 : 1 },
   };
 
   const listings = await listingModel.find(query, null, options);

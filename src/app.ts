@@ -5,7 +5,7 @@ import { connectDB } from "./common/helpers/connectDB";
 import { logger } from "./logger/logger";
 import { errorHandler } from "./Middlewares/error-handler";
 import createError from "http-errors";
-import { applyRouters } from "src/routers";
+//import { applyRouters } from "src/routers";
 import { applyMiddlewares } from "./Middlewares";
 import { createGraphqlServer } from "./servers/createGraphqlServer";
 import { schema } from "./graphql";

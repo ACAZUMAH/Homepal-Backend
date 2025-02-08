@@ -93,12 +93,12 @@ export type Authenticated = {
 
 export type Listing = {
   __typename?: 'Listing';
+  _id: Scalars['ID']['output'];
   address: Scalars['String']['output'];
   amenities: Array<Scalars['String']['output']>;
   bathrooms: Scalars['Int']['output'];
   bedrooms: Scalars['Int']['output'];
   description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
   imageUrls: Array<Scalars['String']['output']>;
   mode: Mode;
   name: Scalars['String']['output'];
@@ -182,22 +182,22 @@ export type PageInfo = {
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
-  getListing: Listing;
-  getListings?: Maybe<ListingConnection>;
   getUserListings?: Maybe<Listing>;
   hello?: Maybe<Scalars['String']['output']>;
+  listing: Listing;
+  listings?: Maybe<ListingConnection>;
   me: User;
   user: User;
 };
 
 
-export type QueryGetListingArgs = {
+export type QueryListingArgs = {
   id: Scalars['ID']['input'];
 };
 
 
-export type QueryGetListingsArgs = {
-  filter?: InputMaybe<ListingFilter>;
+export type QueryListingsArgs = {
+  filters?: InputMaybe<ListingFilter>;
 };
 
 
@@ -259,11 +259,11 @@ export type FavoriteProperties = {
 export type ListingConnection = {
   __typename?: 'listingConnection';
   PageInfo: PageInfo;
-  edges: Array<Maybe<Listing>>;
+  edges?: Maybe<Array<Listing>>;
 };
 
 export type ListingFilter = {
-  adress?: InputMaybe<Scalars['String']['input']>;
+  address?: InputMaybe<Scalars['String']['input']>;
   amenities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   bathrooms?: InputMaybe<Scalars['Int']['input']>;
   bedrooms?: InputMaybe<Scalars['Int']['input']>;
@@ -682,12 +682,12 @@ export interface LatitudeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type ListingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Listing'] = ResolversParentTypes['Listing']> = {
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   amenities?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   bathrooms?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   bedrooms?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   imageUrls?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   mode?: Resolver<ResolversTypes['Mode'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -809,10 +809,10 @@ export interface PostalCodeScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  getListing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, RequireFields<QueryGetListingArgs, 'id'>>;
-  getListings?: Resolver<Maybe<ResolversTypes['listingConnection']>, ParentType, ContextType, Partial<QueryGetListingsArgs>>;
   getUserListings?: Resolver<Maybe<ResolversTypes['Listing']>, ParentType, ContextType>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  listing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, RequireFields<QueryListingArgs, 'id'>>;
+  listings?: Resolver<Maybe<ResolversTypes['listingConnection']>, ParentType, ContextType, Partial<QueryListingsArgs>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };
@@ -912,7 +912,7 @@ export type FavoritePropertiesResolvers<ContextType = any, ParentType extends Re
 
 export type ListingConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['listingConnection'] = ResolversParentTypes['listingConnection']> = {
   PageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  edges?: Resolver<Array<Maybe<ResolversTypes['Listing']>>, ParentType, ContextType>;
+  edges?: Resolver<Maybe<Array<ResolversTypes['Listing']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
