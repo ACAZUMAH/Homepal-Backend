@@ -5,7 +5,7 @@ export const listingTypeDef = `#graphql
     } 
 
     type Listing {
-        id: ID!
+        _id: ID!
         name: String!
         description: String!
         address: String!
@@ -25,8 +25,8 @@ export const listingTypeDef = `#graphql
         limit: Int 
         name: String
         description: String
-        adress: String
-        price: Float
+        address: String
+        price: Int
         bathrooms: Int
         bedrooms: Int
         type: String
@@ -36,7 +36,7 @@ export const listingTypeDef = `#graphql
     }
 
     type listingConnection {
-        edges: [Listing]!
+        edges: [Listing!]
         PageInfo: PageInfo!
     }
 
@@ -45,8 +45,8 @@ export const listingTypeDef = `#graphql
     }
 
     extend type Query {
-        getListing(id: ID!): Listing!
-        getListings(filter: listingFilter): listingConnection
+        listing(id: ID!): Listing!
+        listings(filters: listingFilter): listingConnection
     }
 
     input createListingInput {

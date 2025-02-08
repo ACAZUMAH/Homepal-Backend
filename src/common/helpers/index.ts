@@ -1,6 +1,5 @@
-import { response, Response } from "express";
+import { Response } from "express";
 import createError from "http-errors";
-import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 /**

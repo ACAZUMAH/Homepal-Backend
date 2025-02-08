@@ -1,12 +1,12 @@
-import { Router } from "express";
-import { signIn, signUp, verifyOTP } from "src/controllers/auth/auth.controller";
+// import { Router } from "express";
+// import { signIn, signUp, verifyOTP } from "src/controllers/auth/auth.controller";
 
-const router = Router()
+// const router = Router()
 
-router.post('signup', signUp)
+// router.post('signup', signUp)
 
-router.post('login', signIn)
+// router.post('login', signIn)
 
-router.post('verify', verifyOTP)
+// router.post('verify', verifyOTP)
 
-export default router;
+// export default router;
