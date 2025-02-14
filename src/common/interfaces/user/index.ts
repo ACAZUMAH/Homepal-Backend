@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { favoriteProperties } from "../favorite";
+import { savedProperties } from "../savedProperties";
 
 export interface userDocument {
     _id: Types.ObjectId
@@ -10,7 +10,7 @@ export interface userDocument {
     profile?: string 
     isAuthenticated?: boolean
 
-    favoriteProperties: favoriteProperties
+    savedProperties: savedProperties
 }
 
 export interface upsertUserInput {

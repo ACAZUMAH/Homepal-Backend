@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { favoriteProperties, userDocument } from "src/common/interfaces";
+import { savedProperties, userDocument } from "src/common/interfaces";
 
-const favoriteSchema = new mongoose.Schema<favoriteProperties>({
+const favoriteSchema = new mongoose.Schema<savedProperties>({
   propertyIds: [{ type: mongoose.Schema.ObjectId }],
 
 }, { _id: false })
@@ -10,11 +10,11 @@ const userSchema = new mongoose.Schema<userDocument>({
     firstName: { type: String },
     lastName: { type: String },
     phoneNumber: { type: String, unique: true },
-    email: { type: String, unique: true },
+    email: { type: String },
     profile: { type: String },
     isAuthenticated: { type: Boolean },
 
-    favoriteProperties: favoriteSchema
+    savedProperties: favoriteSchema
   },
   { timestamps: true }
 );

@@ -137,7 +137,7 @@ export const addTofavoriteProperty = async (data: favorite) => {
 
     return await userModel.findByIdAndUpdate(
         { _id: user._id },
-        { $push: { 'favoriteProperties.propertyIds': propertyId } },
+        { $push: { 'savedProperties.propertyIds': propertyId } },
         { new: true }
     )
 }
@@ -153,7 +153,7 @@ export const removeFavoriteProperty = async (data: favorite) => {
 
     return await userModel.findByIdAndUpdate(
         { _id: user._id },
-        { $pull: { 'favoriteProperties.propertyIds': propertyId } },
+        { $pull: { 'savedProperties.propertyIds': propertyId } },
         { new: true }
     )
 }

@@ -4,9 +4,10 @@ import { getUserById } from "../services/user";
 import { userDocument } from "src/common/interfaces";
 import createError from 'http-errors'
 
-export const verifyAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyAccessToken = async (req: Request, _res: Response, next: NextFunction) => {
     try {
         const bearerHeader = req.headers['authorization']
+
         if(!bearerHeader) return next();
 
         const bearer = bearerHeader?.split(' ')
@@ -21,7 +22,6 @@ export const verifyAccessToken = async (req: Request, res: Response, next: NextF
         const user: userDocument = await getUserById(data?.id)
 
         req.user = user
-
         return next()
     } catch (err: any) {
         throw createError.Unauthorized(err?.message || 'Invalid token')

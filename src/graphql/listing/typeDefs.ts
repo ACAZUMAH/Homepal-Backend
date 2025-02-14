@@ -23,6 +23,7 @@ export const listingTypeDef = `#graphql
     input listingFilter {
         page: Int 
         limit: Int 
+        sort: String
         name: String
         description: String
         address: String
