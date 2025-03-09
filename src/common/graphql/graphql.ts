@@ -177,6 +177,7 @@ export type PageInfo = {
   limit: Scalars['Int']['output'];
   page: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Query = {
@@ -785,6 +786,7 @@ export type PageInfoResolvers<ContextType = any, ParentType extends ResolversPar
   limit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

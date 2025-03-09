@@ -25,7 +25,8 @@ export const createListing = async (data: createListingInput) => {
   createListingValidation(data);
 
   const listing = await listingModel.create({ ...data });
-  if (!listing) throw createError.InternalServerError("Unable to create listing");
+  if (!listing)
+    throw createError.InternalServerError("Unable to create listing");
 
   return listing;
 };
@@ -38,7 +39,8 @@ export const createListing = async (data: createListingInput) => {
  * @throws 404 error if listing not found
  */
 export const getListingById = async (id: Types.ObjectId | string) => {
-  if (!Types.ObjectId.isValid(id)) throw createError.BadRequest("Invalid listing id");
+  if (!Types.ObjectId.isValid(id))
+    throw createError.BadRequest("Invalid listing id");
 
   const listing = await listingModel.findById(id);
   if (!listing) throw createError.NotFound("Listing not found");
@@ -67,7 +69,7 @@ export const getListings = async (filter: listingFilter) => {
         { description: { $regex: filter.search, $options: "i" } },
         { name: { $regex: filter.search, $options: "i" } },
         { address: { $regex: filter.search, $options: "i" } },
-        { type: { $regex: filter.search, $options: 'i' } }
+        { type: { $regex: filter.search, $options: "i" } },
       ],
     }),
   };
@@ -76,16 +78,31 @@ export const getListings = async (filter: listingFilter) => {
   const page = getSanitizePage(filter.page);
   const skip = getSanitizeOffset(limit, page);
 
-  const options: QueryOptions = {
-    skip,
-    lean: true,
-    limit: limit + 1,
-    sort: { createdAt: filter.sort === "Newest" ? -1 : 1 },
-  };
+  const sortOrder: 1 | -1 = filter.sort === "Newest" ? -1 : 1;
 
-  const listings = await listingModel.find(query, null, options);
+  const agregationPipeline = [
+    { $match: query },
 
-  return getPageConnection(listings, page, limit);
+    { $sort: { createdAt: sortOrder } },
+
+    {
+      $facet: {
+        listings: [{ $skip: skip }, { $limit: limit }],
+        totalCount: [{ $count: "count" }],
+      },
+    },
+
+    {
+      $project: {
+        listings: '$listings',
+        totalCount: { $arrayElemAt: ['$totalCount.count', 0] }
+      }
+    }
+  ];
+
+  const [result] = await listingModel.aggregate(agregationPipeline)
+
+  return getPageConnection(result.listings, page, limit, result.totalCount)
 };
 
 /**
@@ -96,26 +113,28 @@ export const getListings = async (filter: listingFilter) => {
  * @throws 404 error if listing not found
  */
 export const updateListing = async (data: updateListingInput) => {
-    const listing = await getListingById(data.id)
+  const listing = await getListingById(data.id);
 
-    const updateData = {
-        ...(data.name && { name: data.name }),
-        ...(data.description && { description: data.description }),
-        ...(data.address && { address: data.address }),
-        ...(data.price && { regularPrice: data.price }),
-        ...(data.bathrooms && { bathrooms: data.bathrooms }),
-        ...(data.bedrooms && { bedrooms: data.bedrooms }),
-        ...(data.type && { type: data.type }),
-        ...(data.mode && { mode: data.mode }),
-        ...(data.amenities && data.amenities.length > 0 && { amenities: data.amenities }),
-        ...(data.imageUrls && data.imageUrls.length > 0 && { imageUrls: data.imageUrls })
-    };
+  const updateData = {
+    ...(data.name && { name: data.name }),
+    ...(data.description && { description: data.description }),
+    ...(data.address && { address: data.address }),
+    ...(data.price && { regularPrice: data.price }),
+    ...(data.bathrooms && { bathrooms: data.bathrooms }),
+    ...(data.bedrooms && { bedrooms: data.bedrooms }),
+    ...(data.type && { type: data.type }),
+    ...(data.mode && { mode: data.mode }),
+    ...(data.amenities &&
+      data.amenities.length > 0 && { amenities: data.amenities }),
+    ...(data.imageUrls &&
+      data.imageUrls.length > 0 && { imageUrls: data.imageUrls }),
+  };
 
-    return await listingModel.findByIdAndUpdate(
-        { _id: listing._id, userRef: data.userRef },
-        { $set: updateData },
-        { new: true }
-    );
+  return await listingModel.findByIdAndUpdate(
+    { _id: listing._id, userRef: data.userRef },
+    { $set: updateData },
+    { new: true }
+  );
 };
 
 /**
@@ -125,11 +144,12 @@ export const updateListing = async (data: updateListingInput) => {
  * @throws 400 error listing id is invalid
  */
 export const deleteListingById = async (id: string | Types.ObjectId) => {
-    if(!Types.ObjectId.isValid(id)) throw createError.BadRequest('Invalid listing id')
-    
-    const listing = await listingModel.findByIdAndDelete({ _id: id })
+  if (!Types.ObjectId.isValid(id))
+    throw createError.BadRequest("Invalid listing id");
 
-    if(!listing) throw createError.NotFound("Unable to delete")
-    
-    return 'succesfully deleted'
+  const listing = await listingModel.findByIdAndDelete({ _id: id });
+
+  if (!listing) throw createError.NotFound("Unable to delete");
+
+  return "succesfully deleted";
 };
