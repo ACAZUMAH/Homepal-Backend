@@ -13,6 +13,7 @@ import {
   getSanitizeLimit,
   getSanitizeOffset,
   getSanitizePage,
+  stringsToObjecIds,
 } from "../../common/helpers";
 
 /**
@@ -53,7 +54,7 @@ export const getListingById = async (id: Types.ObjectId | string) => {
  * @param filter - filter options
  * @returns list of filtered listing
  */
-export const getListings = async (filter: listingFilter) => {
+export const getListings = async (filter: listingFilter, favoriteIds?: Types.ObjectId[]) => {
   const query: FilterQuery<listingDocument> = {
     ...(filter.userRef && { userRef: filter.userRef }),
     ...(filter.name && { name: filter.name }),
@@ -72,6 +73,7 @@ export const getListings = async (filter: listingFilter) => {
         { type: { $regex: filter.search, $options: "i" } },
       ],
     }),
+    ...(favoriteIds && { _id: { $in: favoriteIds }})
   };
 
   const limit = getSanitizeLimit(filter.limit);
@@ -104,6 +106,24 @@ export const getListings = async (filter: listingFilter) => {
 
   return getPageConnection(result.listings, page, limit, result.totalCount)
 };
+
+export const getFavoriteListings = async (ids: string[], filters: listingFilter) => {
+  if (!ids.length)
+    return {
+      edges: [],
+      PageInfo: {
+        page: filters.page,
+        limit: filters.limit,
+        total: 0,
+        hasNextPage: false,
+        totalCount: 0
+      },
+    };
+
+  const favoriteIds = stringsToObjecIds(ids)
+
+  return await getListings(filters, favoriteIds);
+}
 
 /**
  * update a listing
@@ -153,3 +173,7 @@ export const deleteListingById = async (id: string | Types.ObjectId) => {
 
   return "succesfully deleted";
 };
+
+export const getPropertiesByIds = async (ids: string[] | Types.ObjectId[]) => {
+  return await listingModel.find({ _id: { $in : ids }})
+}

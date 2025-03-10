@@ -131,7 +131,7 @@ export const deleteUser = async (id: string | Types.ObjectId) => {
  * @throws 400 error if user Id is invalid
  * @throws 404 error if User not found
  */
-export const addTofavoriteProperty = async (data: favorite) => {
+export const addToSavedProperty = async (data: favorite) => {
     const { id, propertyId } = data
     const user = await getUserById(id)
 
@@ -147,7 +147,7 @@ export const addTofavoriteProperty = async (data: favorite) => {
  * @param data 
  * @returns 
  */
-export const removeFavoriteProperty = async (data: favorite) => {
+export const removeSavedProperty = async (data: favorite) => {
     const { id, propertyId } = data
     const user = await getUserById(id)
 

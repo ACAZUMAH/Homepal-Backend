@@ -22,7 +22,7 @@ export const userTypeDefs = `#graphql
    extend type Query {
       me: User!
       user(id: ID!): User!
-      getUserListings: Listing
+      getUserListings: [Listing]
    }
 
    input UpdateUserInput{

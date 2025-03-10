@@ -183,12 +183,19 @@ export type PageInfo = {
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
-  getUserListings?: Maybe<Listing>;
+  getFavoriteProperties?: Maybe<Array<Maybe<Listing>>>;
+  getUserListings?: Maybe<Array<Maybe<Listing>>>;
   hello?: Maybe<Scalars['String']['output']>;
   listing: Listing;
   listings?: Maybe<ListingConnection>;
   me: User;
   user: User;
+};
+
+
+export type QueryGetFavoritePropertiesArgs = {
+  filters?: InputMaybe<ListingFilters>;
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 
@@ -198,7 +205,7 @@ export type QueryListingArgs = {
 
 
 export type QueryListingsArgs = {
-  filters?: InputMaybe<ListingFilter>;
+  filters?: InputMaybe<ListingFilters>;
 };
 
 
@@ -263,7 +270,7 @@ export type ListingConnection = {
   edges?: Maybe<Array<Listing>>;
 };
 
-export type ListingFilter = {
+export type ListingFilters = {
   address?: InputMaybe<Scalars['String']['input']>;
   amenities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   bathrooms?: InputMaybe<Scalars['Int']['input']>;
@@ -452,7 +459,7 @@ export type ResolversTypes = {
   deleteResponse: ResolverTypeWrapper<DeleteResponse>;
   favoriteProperties: ResolverTypeWrapper<FavoriteProperties>;
   listingConnection: ResolverTypeWrapper<ListingConnection>;
-  listingFilter: ListingFilter;
+  listingFilters: ListingFilters;
   updateListingInput: UpdateListingInput;
 };
 
@@ -545,7 +552,7 @@ export type ResolversParentTypes = {
   deleteResponse: DeleteResponse;
   favoriteProperties: FavoriteProperties;
   listingConnection: ListingConnection;
-  listingFilter: ListingFilter;
+  listingFilters: ListingFilters;
   updateListingInput: UpdateListingInput;
 };
 
@@ -812,7 +819,8 @@ export interface PostalCodeScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  getUserListings?: Resolver<Maybe<ResolversTypes['Listing']>, ParentType, ContextType>;
+  getFavoriteProperties?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType, Partial<QueryGetFavoritePropertiesArgs>>;
+  getUserListings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   listing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, RequireFields<QueryListingArgs, 'id'>>;
   listings?: Resolver<Maybe<ResolversTypes['listingConnection']>, ParentType, ContextType, Partial<QueryListingsArgs>>;

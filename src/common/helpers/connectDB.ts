@@ -7,7 +7,7 @@ export const connectDB = async (url: string) => {
   });
 
   mongoose.connection.on("error", (err) => {
-    logger.info("Batabase error", err);
+    logger.error("Batabase error", err);
   });
 
   mongoose.connection.on("disconnected", () => {

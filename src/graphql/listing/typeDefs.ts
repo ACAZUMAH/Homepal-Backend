@@ -20,7 +20,7 @@ export const listingTypeDef = `#graphql
         user: User!
     }
 
-    input listingFilter {
+    input listingFilters {
         page: Int 
         limit: Int 
         sort: String
@@ -47,7 +47,8 @@ export const listingTypeDef = `#graphql
 
     extend type Query {
         listing(id: ID!): Listing!
-        listings(filters: listingFilter): listingConnection
+        listings(filters: listingFilters): listingConnection
+        getFavoriteProperties(ids: [ID!], filters: listingFilters): listingConnection
     }
 
     input createListingInput {

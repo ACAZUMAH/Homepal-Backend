@@ -1,6 +1,6 @@
 import { GrapghqlContext, userDocument } from "src/common/interfaces"
 import * as services from "../../services/user"
-import { MutationSavePropertyArgs, MutationRemoveSavedPropertyArgs, MutationUpdateUserArgs, QueryUserArgs, User } from "src/common/graphql/graphql"
+import { MutationSavePropertyArgs, MutationRemoveSavedPropertyArgs, MutationUpdateUserArgs, QueryUserArgs, User, QueryGetFavoritePropertiesArgs } from "src/common/graphql/graphql"
 import { getListings } from "src/services/listing"
 
 const me = (_:any, __: any, { user }: GrapghqlContext) => {
@@ -20,11 +20,11 @@ const getUserListings = (_:any, { user }: GrapghqlContext) => {
 }
 
 const saveProperty = (_:any, { propertyId }: MutationSavePropertyArgs, { user }: GrapghqlContext) => { 
-    return services.addTofavoriteProperty({ id: user?._id!, propertyId })
+    return services.addToSavedProperty({ id: user?._id!, propertyId })
 }
 
 const removeSavedProperty = (_:any, { propertyId }: MutationRemoveSavedPropertyArgs, { user }: GrapghqlContext) => {
-    return services.removeFavoriteProperty({ id: user?._id!, propertyId })
+    return services.removeSavedProperty({ id: user?._id!, propertyId })
 }
 
 const savedProperties = (parent: userDocument, _:any, { listingLoader }: GrapghqlContext) => {
