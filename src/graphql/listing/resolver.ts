@@ -1,4 +1,4 @@
-import { Listing, MutationCreateListingArgs, MutationDeleteListingArgs, MutationUpdateListingArgs, QueryListingArgs, QueryListingsArgs } from "src/common/graphql/graphql"
+import { Listing, MutationCreateListingArgs, MutationDeleteListingArgs, MutationUpdateListingArgs, QueryGetFavoritePropertiesArgs, QueryListingArgs, QueryListingsArgs } from "src/common/graphql/graphql"
 import { GrapghqlContext } from "src/common/interfaces"
 import * as service from '../../services/listing'
 
@@ -22,6 +22,10 @@ const deleteListing = (_: any, { id }: MutationDeleteListingArgs) => {
     return service.deleteListingById(id)
 }
 
+const getFavoriteProperties = (_:any, args: QueryGetFavoritePropertiesArgs) => {
+    return service.getFavoriteListings(args.ids!, args.filters!)
+}
+
 const user = (parent: Listing, _: any, { userLoader }: GrapghqlContext) => {
     return parent.userRef ? userLoader.load(parent.userRef.toString()) : null
 }
@@ -29,7 +33,8 @@ const user = (parent: Listing, _: any, { userLoader }: GrapghqlContext) => {
 export const listingResoler = {
     Query: {
         listing,
-        listings
+        listings,
+        getFavoriteProperties
     },
     Mutation: {
         createListing,

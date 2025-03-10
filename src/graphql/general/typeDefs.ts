@@ -4,6 +4,7 @@ export const generalTypeDef = `#graphql
         total: Int!
         limit: Int!
         hasNextPage: Boolean!
+        totalCount: Int
     }
     
     type Query {

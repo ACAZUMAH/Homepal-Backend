@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
 
-export interface favoriteProperties {
+export interface savedProperties {
     propertyIds: Array<Types.ObjectId | string>
 }

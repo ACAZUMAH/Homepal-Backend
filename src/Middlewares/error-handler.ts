@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import createError from 'http-errors'
 import { constructHttpResponse } from "src/common/helpers";
 import { logger } from "src/logger/logger";
+import { rollbar } from "src/logger/rollbar";
 
 /**
  * general error handler for any thrown error
@@ -12,6 +13,7 @@ import { logger } from "src/logger/logger";
  * @returns 
  */
 export const errorHandler = (err: any, _req: Request, res: Response, next: NextFunction) => {
+    rollbar.log(err)
     logger.info(err)
     if(createError.isHttpError(err)){
         return constructHttpResponse(null, err, err.status)(res);

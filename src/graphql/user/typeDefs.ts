@@ -16,13 +16,13 @@ export const userTypeDefs = `#graphql
 
       Listings: [Listing]
 
-      favoriteProperties: [Listing]
+      savedProperties: [Listing]
    }
 
    extend type Query {
       me: User!
       user(id: ID!): User!
-      getUserListings: Listing
+      getUserListings: [Listing]
    }
 
    input UpdateUserInput{
@@ -35,7 +35,7 @@ export const userTypeDefs = `#graphql
 
    extend type Mutation {
        updateUser(data: UpdateUserInput): User!
-       addFavorite(propertyId: String!): User!
-       removeFavorite(propertyId: String!): User!
+       saveProperty(propertyId: String!): User!
+       removeSavedProperty(propertyId: String!): User!
    }
 `;

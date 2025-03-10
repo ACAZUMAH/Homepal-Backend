@@ -121,19 +121,14 @@ export enum Mode {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']['output']>;
-  addFavorite: User;
   completeAuthAndGenerateToken: Authenticated;
   createListing: Listing;
   deleteListing?: Maybe<DeleteResponse>;
   loginWithPhoneNumber: LoginResponse;
-  removeFavorite: User;
+  removeSavedProperty: User;
+  saveProperty: User;
   updateListing: Listing;
   updateUser: User;
-};
-
-
-export type MutationAddFavoriteArgs = {
-  propertyId: Scalars['String']['input'];
 };
 
 
@@ -157,7 +152,12 @@ export type MutationLoginWithPhoneNumberArgs = {
 };
 
 
-export type MutationRemoveFavoriteArgs = {
+export type MutationRemoveSavedPropertyArgs = {
+  propertyId: Scalars['String']['input'];
+};
+
+
+export type MutationSavePropertyArgs = {
   propertyId: Scalars['String']['input'];
 };
 
@@ -177,17 +177,25 @@ export type PageInfo = {
   limit: Scalars['Int']['output'];
   page: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
-  getUserListings?: Maybe<Listing>;
+  getFavoriteProperties?: Maybe<Array<Maybe<Listing>>>;
+  getUserListings?: Maybe<Array<Maybe<Listing>>>;
   hello?: Maybe<Scalars['String']['output']>;
   listing: Listing;
   listings?: Maybe<ListingConnection>;
   me: User;
   user: User;
+};
+
+
+export type QueryGetFavoritePropertiesArgs = {
+  filters?: InputMaybe<ListingFilters>;
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 
@@ -197,7 +205,7 @@ export type QueryListingArgs = {
 
 
 export type QueryListingsArgs = {
-  filters?: InputMaybe<ListingFilter>;
+  filters?: InputMaybe<ListingFilters>;
 };
 
 
@@ -223,13 +231,13 @@ export type User = {
   Listings?: Maybe<Array<Maybe<Listing>>>;
   createdAt: Scalars['DateTime']['output'];
   email?: Maybe<Scalars['EmailAddress']['output']>;
-  favoriteProperties?: Maybe<Array<Maybe<Listing>>>;
   firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   isAuthenticated?: Maybe<Scalars['Boolean']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
   phoneNumber: Scalars['PhoneNumber']['output'];
   profile?: Maybe<Scalars['String']['output']>;
+  savedProperties?: Maybe<Array<Maybe<Listing>>>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -262,7 +270,7 @@ export type ListingConnection = {
   edges?: Maybe<Array<Listing>>;
 };
 
-export type ListingFilter = {
+export type ListingFilters = {
   address?: InputMaybe<Scalars['String']['input']>;
   amenities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   bathrooms?: InputMaybe<Scalars['Int']['input']>;
@@ -272,8 +280,9 @@ export type ListingFilter = {
   mode?: InputMaybe<Mode>;
   name?: InputMaybe<Scalars['String']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  price?: InputMaybe<Scalars['Float']['input']>;
+  price?: InputMaybe<Scalars['Int']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -450,7 +459,7 @@ export type ResolversTypes = {
   deleteResponse: ResolverTypeWrapper<DeleteResponse>;
   favoriteProperties: ResolverTypeWrapper<FavoriteProperties>;
   listingConnection: ResolverTypeWrapper<ListingConnection>;
-  listingFilter: ListingFilter;
+  listingFilters: ListingFilters;
   updateListingInput: UpdateListingInput;
 };
 
@@ -543,7 +552,7 @@ export type ResolversParentTypes = {
   deleteResponse: DeleteResponse;
   favoriteProperties: FavoriteProperties;
   listingConnection: ListingConnection;
-  listingFilter: ListingFilter;
+  listingFilters: ListingFilters;
   updateListingInput: UpdateListingInput;
 };
 
@@ -737,12 +746,12 @@ export interface MacScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  addFavorite?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationAddFavoriteArgs, 'propertyId'>>;
   completeAuthAndGenerateToken?: Resolver<ResolversTypes['Authenticated'], ParentType, ContextType, RequireFields<MutationCompleteAuthAndGenerateTokenArgs, 'token'>>;
   createListing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, Partial<MutationCreateListingArgs>>;
   deleteListing?: Resolver<Maybe<ResolversTypes['deleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteListingArgs, 'id'>>;
   loginWithPhoneNumber?: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationLoginWithPhoneNumberArgs, 'phoneNumber'>>;
-  removeFavorite?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRemoveFavoriteArgs, 'propertyId'>>;
+  removeSavedProperty?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRemoveSavedPropertyArgs, 'propertyId'>>;
+  saveProperty?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationSavePropertyArgs, 'propertyId'>>;
   updateListing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, Partial<MutationUpdateListingArgs>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateUserArgs>>;
 };
@@ -784,6 +793,7 @@ export type PageInfoResolvers<ContextType = any, ParentType extends ResolversPar
   limit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -809,7 +819,8 @@ export interface PostalCodeScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  getUserListings?: Resolver<Maybe<ResolversTypes['Listing']>, ParentType, ContextType>;
+  getFavoriteProperties?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType, Partial<QueryGetFavoritePropertiesArgs>>;
+  getUserListings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   listing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, RequireFields<QueryListingArgs, 'id'>>;
   listings?: Resolver<Maybe<ResolversTypes['listingConnection']>, ParentType, ContextType, Partial<QueryListingsArgs>>;
@@ -881,13 +892,13 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   Listings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['EmailAddress']>, ParentType, ContextType>;
-  favoriteProperties?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType>;
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   isAuthenticated?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneNumber?: Resolver<ResolversTypes['PhoneNumber'], ParentType, ContextType>;
   profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  savedProperties?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

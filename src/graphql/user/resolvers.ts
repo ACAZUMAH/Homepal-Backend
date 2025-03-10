@@ -1,6 +1,6 @@
 import { GrapghqlContext, userDocument } from "src/common/interfaces"
 import * as services from "../../services/user"
-import { MutationAddFavoriteArgs, MutationRemoveFavoriteArgs, MutationUpdateUserArgs, QueryUserArgs, User } from "src/common/graphql/graphql"
+import { MutationSavePropertyArgs, MutationRemoveSavedPropertyArgs, MutationUpdateUserArgs, QueryUserArgs, User, QueryGetFavoritePropertiesArgs } from "src/common/graphql/graphql"
 import { getListings } from "src/services/listing"
 
 const me = (_:any, __: any, { user }: GrapghqlContext) => {
@@ -19,16 +19,16 @@ const getUserListings = (_:any, { user }: GrapghqlContext) => {
     return getListings({ userRef: user?._id })
 }
 
-const addFavorite = (_:any, { propertyId }: MutationAddFavoriteArgs, { user }: GrapghqlContext) => { 
-    return services.addTofavoriteProperty({ id: user?._id!, propertyId })
+const saveProperty = (_:any, { propertyId }: MutationSavePropertyArgs, { user }: GrapghqlContext) => { 
+    return services.addToSavedProperty({ id: user?._id!, propertyId })
 }
 
-const removeFavorite = (_:any, { propertyId }: MutationRemoveFavoriteArgs, { user }: GrapghqlContext) => {
-    return services.removeFavoriteProperty({ id: user?._id!, propertyId })
+const removeSavedProperty = (_:any, { propertyId }: MutationRemoveSavedPropertyArgs, { user }: GrapghqlContext) => {
+    return services.removeSavedProperty({ id: user?._id!, propertyId })
 }
 
-const favoriteProperties = (parent: userDocument, _:any, { listingLoader }: GrapghqlContext) => {
-    return parent.favoriteProperties ? listingLoader.loadMany(parent.favoriteProperties.propertyIds.map(String) ?? []) : null
+const savedProperties = (parent: userDocument, _:any, { listingLoader }: GrapghqlContext) => {
+    return parent.savedProperties ? listingLoader.loadMany(parent.savedProperties.propertyIds.map(String) ?? []) : null
 }
 
 export const userResolvers = {
@@ -39,10 +39,10 @@ export const userResolvers = {
     },
     Mutation: {
         updateUser,
-        addFavorite,
-        removeFavorite
+        saveProperty,
+        removeSavedProperty
     },
     User: {
-        favoriteProperties
+        savedProperties
     }
 }
