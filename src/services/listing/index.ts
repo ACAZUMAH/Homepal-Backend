@@ -71,9 +71,11 @@ export const getListings = async (filter: listingFilter, favoriteIds?: Types.Obj
         { name: { $regex: filter.search, $options: "i" } },
         { address: { $regex: filter.search, $options: "i" } },
         { type: { $regex: filter.search, $options: "i" } },
+        { price: { $regex: filter.search, $options: "i" } },
+        { mode: { $regex: filter.search, $options: "i" } },
       ],
     }),
-    ...(favoriteIds && { _id: { $in: favoriteIds }})
+    ...(favoriteIds && { _id: { $in: favoriteIds } }),
   };
 
   const limit = getSanitizeLimit(filter.limit);

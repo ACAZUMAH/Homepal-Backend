@@ -13,7 +13,6 @@ const userSchema = new mongoose.Schema<userDocument>({
     email: { type: String },
     profile: { type: String },
     isAuthenticated: { type: Boolean },
-
     savedProperties: savedPropertiesSchema
   },
   { timestamps: true }

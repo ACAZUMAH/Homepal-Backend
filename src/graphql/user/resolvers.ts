@@ -1,7 +1,9 @@
 import { GrapghqlContext, userDocument } from "src/common/interfaces"
 import * as services from "../../services/user"
-import { MutationSavePropertyArgs, MutationRemoveSavedPropertyArgs, MutationUpdateUserArgs, QueryUserArgs, User, QueryGetFavoritePropertiesArgs } from "src/common/graphql/graphql"
+import { MutationSavePropertyArgs, MutationRemoveSavedPropertyArgs, MutationUpdateUserArgs, QueryUserArgs, MutationCreateTourRequestArgs, MutationCreateOfferArgs } from "src/common/graphql/graphql"
 import { getListings } from "src/services/listing"
+import * as tourServices from "src/services/tours"
+import { createNewOffer } from "src/services/offers"
 
 const me = (_:any, __: any, { user }: GrapghqlContext) => {
     return services.getUserById(user?._id!)
@@ -31,6 +33,16 @@ const savedProperties = (parent: userDocument, _:any, { listingLoader }: Grapghq
     return parent.savedProperties ? listingLoader.loadMany(parent.savedProperties.propertyIds.map(String) ?? []) : null
 }
 
+
+const createTourRequest = (_: any, args: MutationCreateTourRequestArgs ) => {
+   return tourServices.createNewTourRequest({ ...args.data! });
+};
+
+const createOffer = (_:any, args: MutationCreateOfferArgs) => {
+    return createNewOffer({ ...args.data! })
+}
+
+
 export const userResolvers = {
     Query: {
         me,
@@ -40,7 +52,9 @@ export const userResolvers = {
     Mutation: {
         updateUser,
         saveProperty,
-        removeSavedProperty
+        removeSavedProperty,
+        createTourRequest,
+        createOffer  
     },
     User: {
         savedProperties

@@ -123,6 +123,8 @@ export type Mutation = {
   _empty?: Maybe<Scalars['String']['output']>;
   completeAuthAndGenerateToken: Authenticated;
   createListing: Listing;
+  createOffer?: Maybe<Offer>;
+  createTourRequest?: Maybe<TourRequest>;
   deleteListing?: Maybe<DeleteResponse>;
   loginWithPhoneNumber: LoginResponse;
   removeSavedProperty: User;
@@ -139,6 +141,16 @@ export type MutationCompleteAuthAndGenerateTokenArgs = {
 
 export type MutationCreateListingArgs = {
   data?: InputMaybe<CreateListingInput>;
+};
+
+
+export type MutationCreateOfferArgs = {
+  data?: InputMaybe<CreateOfferInput>;
+};
+
+
+export type MutationCreateTourRequestArgs = {
+  data?: InputMaybe<CreateTourInput>;
 };
 
 
@@ -183,8 +195,10 @@ export type PageInfo = {
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
-  getFavoriteProperties?: Maybe<Array<Maybe<Listing>>>;
+  getFavoriteProperties?: Maybe<ListingConnection>;
+  getRequestedToursOnUserProperty?: Maybe<Array<Maybe<TourRequest>>>;
   getUserListings?: Maybe<Array<Maybe<Listing>>>;
+  getUserRequestedTours?: Maybe<Array<Maybe<TourRequest>>>;
   hello?: Maybe<Scalars['String']['output']>;
   listing: Listing;
   listings?: Maybe<ListingConnection>;
@@ -218,6 +232,23 @@ export type Subscription = {
   _empty?: Maybe<Scalars['String']['output']>;
 };
 
+export enum TourMode {
+  IN_PERSON = 'IN_PERSON',
+  VIDEO_CALL = 'VIDEO_CALL'
+}
+
+export type TourRequest = {
+  __typename?: 'TourRequest';
+  _id: Scalars['ID']['output'];
+  agentId: Scalars['String']['output'];
+  clientId: Scalars['String']['output'];
+  contactDetails?: Maybe<Scalars['String']['output']>;
+  propertyId: Scalars['String']['output'];
+  scheduledDate?: Maybe<Scalars['DateTime']['output']>;
+  tourMode?: Maybe<TourMode>;
+  videoCallMode?: Maybe<VideoCallMode>;
+};
+
 export type UpdateUserInput = {
   email?: InputMaybe<Scalars['String']['input']>;
   firstName?: InputMaybe<Scalars['String']['input']>;
@@ -229,10 +260,10 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   Listings?: Maybe<Array<Maybe<Listing>>>;
+  _id: Scalars['ID']['output'];
   createdAt: Scalars['DateTime']['output'];
   email?: Maybe<Scalars['EmailAddress']['output']>;
   firstName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
   isAuthenticated?: Maybe<Scalars['Boolean']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
   phoneNumber: Scalars['PhoneNumber']['output'];
@@ -240,6 +271,12 @@ export type User = {
   savedProperties?: Maybe<Array<Maybe<Listing>>>;
   updatedAt: Scalars['DateTime']['output'];
 };
+
+export enum VideoCallMode {
+  FACE_TIME = 'FACE_TIME',
+  GOOGLE_MEET = 'GOOGLE_MEET',
+  WHATSAPP = 'WHATSAPP'
+}
 
 export type CreateListingInput = {
   address: Scalars['String']['input'];
@@ -252,6 +289,28 @@ export type CreateListingInput = {
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   type: Scalars['String']['input'];
+};
+
+export type CreateOfferInput = {
+  agentId: Scalars['String']['input'];
+  clientId: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  message?: InputMaybe<Scalars['String']['input']>;
+  offerAmount: Scalars['Int']['input'];
+  phoneNumber: Scalars['String']['input'];
+  propertyId: Scalars['String']['input'];
+};
+
+export type CreateTourInput = {
+  agentId: Scalars['String']['input'];
+  clientId: Scalars['String']['input'];
+  contactDetails: Scalars['String']['input'];
+  propertyId: Scalars['String']['input'];
+  scheduledDate: Scalars['DateTime']['input'];
+  tourMode: TourMode;
+  videoCallMode?: InputMaybe<VideoCallMode>;
 };
 
 export type DeleteResponse = {
@@ -284,6 +343,19 @@ export type ListingFilters = {
   search?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Offer = {
+  __typename?: 'offer';
+  agentId: Scalars['String']['output'];
+  clientId: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  message?: Maybe<Scalars['String']['output']>;
+  offerAmount: Scalars['Int']['output'];
+  phoneNumber: Scalars['String']['output'];
+  propertyId: Scalars['String']['output'];
 };
 
 export type UpdateListingInput = {
@@ -446,6 +518,8 @@ export type ResolversTypes = {
   Time: ResolverTypeWrapper<Scalars['Time']['output']>;
   TimeZone: ResolverTypeWrapper<Scalars['TimeZone']['output']>;
   Timestamp: ResolverTypeWrapper<Scalars['Timestamp']['output']>;
+  TourMode: TourMode;
+  TourRequest: ResolverTypeWrapper<TourRequest>;
   URL: ResolverTypeWrapper<Scalars['URL']['output']>;
   USCurrency: ResolverTypeWrapper<Scalars['USCurrency']['output']>;
   UUID: ResolverTypeWrapper<Scalars['UUID']['output']>;
@@ -454,12 +528,16 @@ export type ResolversTypes = {
   UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
   UtcOffset: ResolverTypeWrapper<Scalars['UtcOffset']['output']>;
+  VideoCallMode: VideoCallMode;
   Void: ResolverTypeWrapper<Scalars['Void']['output']>;
   createListingInput: CreateListingInput;
+  createOfferInput: CreateOfferInput;
+  createTourInput: CreateTourInput;
   deleteResponse: ResolverTypeWrapper<DeleteResponse>;
   favoriteProperties: ResolverTypeWrapper<FavoriteProperties>;
   listingConnection: ResolverTypeWrapper<ListingConnection>;
   listingFilters: ListingFilters;
+  offer: ResolverTypeWrapper<Offer>;
   updateListingInput: UpdateListingInput;
 };
 
@@ -539,6 +617,7 @@ export type ResolversParentTypes = {
   Time: Scalars['Time']['output'];
   TimeZone: Scalars['TimeZone']['output'];
   Timestamp: Scalars['Timestamp']['output'];
+  TourRequest: TourRequest;
   URL: Scalars['URL']['output'];
   USCurrency: Scalars['USCurrency']['output'];
   UUID: Scalars['UUID']['output'];
@@ -549,10 +628,13 @@ export type ResolversParentTypes = {
   UtcOffset: Scalars['UtcOffset']['output'];
   Void: Scalars['Void']['output'];
   createListingInput: CreateListingInput;
+  createOfferInput: CreateOfferInput;
+  createTourInput: CreateTourInput;
   deleteResponse: DeleteResponse;
   favoriteProperties: FavoriteProperties;
   listingConnection: ListingConnection;
   listingFilters: ListingFilters;
+  offer: Offer;
   updateListingInput: UpdateListingInput;
 };
 
@@ -748,6 +830,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   completeAuthAndGenerateToken?: Resolver<ResolversTypes['Authenticated'], ParentType, ContextType, RequireFields<MutationCompleteAuthAndGenerateTokenArgs, 'token'>>;
   createListing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, Partial<MutationCreateListingArgs>>;
+  createOffer?: Resolver<Maybe<ResolversTypes['offer']>, ParentType, ContextType, Partial<MutationCreateOfferArgs>>;
+  createTourRequest?: Resolver<Maybe<ResolversTypes['TourRequest']>, ParentType, ContextType, Partial<MutationCreateTourRequestArgs>>;
   deleteListing?: Resolver<Maybe<ResolversTypes['deleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteListingArgs, 'id'>>;
   loginWithPhoneNumber?: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationLoginWithPhoneNumberArgs, 'phoneNumber'>>;
   removeSavedProperty?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRemoveSavedPropertyArgs, 'propertyId'>>;
@@ -819,8 +903,10 @@ export interface PostalCodeScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  getFavoriteProperties?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType, Partial<QueryGetFavoritePropertiesArgs>>;
+  getFavoriteProperties?: Resolver<Maybe<ResolversTypes['listingConnection']>, ParentType, ContextType, Partial<QueryGetFavoritePropertiesArgs>>;
+  getRequestedToursOnUserProperty?: Resolver<Maybe<Array<Maybe<ResolversTypes['TourRequest']>>>, ParentType, ContextType>;
   getUserListings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType>;
+  getUserRequestedTours?: Resolver<Maybe<Array<Maybe<ResolversTypes['TourRequest']>>>, ParentType, ContextType>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   listing?: Resolver<ResolversTypes['Listing'], ParentType, ContextType, RequireFields<QueryListingArgs, 'id'>>;
   listings?: Resolver<Maybe<ResolversTypes['listingConnection']>, ParentType, ContextType, Partial<QueryListingsArgs>>;
@@ -868,6 +954,18 @@ export interface TimestampScalarConfig extends GraphQLScalarTypeConfig<Resolvers
   name: 'Timestamp';
 }
 
+export type TourRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['TourRequest'] = ResolversParentTypes['TourRequest']> = {
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  agentId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  clientId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  contactDetails?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  propertyId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  scheduledDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  tourMode?: Resolver<Maybe<ResolversTypes['TourMode']>, ParentType, ContextType>;
+  videoCallMode?: Resolver<Maybe<ResolversTypes['VideoCallMode']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['URL'], any> {
   name: 'URL';
 }
@@ -890,10 +988,10 @@ export interface UnsignedIntScalarConfig extends GraphQLScalarTypeConfig<Resolve
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   Listings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType>;
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['EmailAddress']>, ParentType, ContextType>;
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   isAuthenticated?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneNumber?: Resolver<ResolversTypes['PhoneNumber'], ParentType, ContextType>;
@@ -924,6 +1022,19 @@ export type FavoritePropertiesResolvers<ContextType = any, ParentType extends Re
 export type ListingConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['listingConnection'] = ResolversParentTypes['listingConnection']> = {
   PageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   edges?: Resolver<Maybe<Array<ResolversTypes['Listing']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type OfferResolvers<ContextType = any, ParentType extends ResolversParentTypes['offer'] = ResolversParentTypes['offer']> = {
+  agentId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  clientId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  offerAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  phoneNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  propertyId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -997,6 +1108,7 @@ export type Resolvers<ContextType = any> = {
   Time?: GraphQLScalarType;
   TimeZone?: GraphQLScalarType;
   Timestamp?: GraphQLScalarType;
+  TourRequest?: TourRequestResolvers<ContextType>;
   URL?: GraphQLScalarType;
   USCurrency?: GraphQLScalarType;
   UUID?: GraphQLScalarType;
@@ -1008,5 +1120,6 @@ export type Resolvers<ContextType = any> = {
   deleteResponse?: DeleteResponseResolvers<ContextType>;
   favoriteProperties?: FavoritePropertiesResolvers<ContextType>;
   listingConnection?: ListingConnectionResolvers<ContextType>;
+  offer?: OfferResolvers<ContextType>;
 };
 
