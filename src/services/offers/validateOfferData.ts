@@ -17,7 +17,7 @@ const offerSchama = {
     firstName: { type: "string" },
     lastName: { type: "string" },
     email: { type: "string" },
-    PhoneNumber: { type: "string" },
+    phoneNumber: { type: "string" },
     offerAmount: { type: "number" },
   },
 

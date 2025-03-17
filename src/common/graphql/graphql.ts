@@ -260,10 +260,10 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   Listings?: Maybe<Array<Maybe<Listing>>>;
-  _id: Scalars['ID']['output'];
   createdAt: Scalars['DateTime']['output'];
   email?: Maybe<Scalars['EmailAddress']['output']>;
   firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
   isAuthenticated?: Maybe<Scalars['Boolean']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
   phoneNumber: Scalars['PhoneNumber']['output'];
@@ -347,6 +347,7 @@ export type ListingFilters = {
 
 export type Offer = {
   __typename?: 'offer';
+  _id: Scalars['ID']['output'];
   agentId: Scalars['String']['output'];
   clientId: Scalars['String']['output'];
   email: Scalars['String']['output'];
@@ -988,10 +989,10 @@ export interface UnsignedIntScalarConfig extends GraphQLScalarTypeConfig<Resolve
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   Listings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Listing']>>>, ParentType, ContextType>;
-  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['EmailAddress']>, ParentType, ContextType>;
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   isAuthenticated?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phoneNumber?: Resolver<ResolversTypes['PhoneNumber'], ParentType, ContextType>;
@@ -1026,6 +1027,7 @@ export type ListingConnectionResolvers<ContextType = any, ParentType extends Res
 };
 
 export type OfferResolvers<ContextType = any, ParentType extends ResolversParentTypes['offer'] = ResolversParentTypes['offer']> = {
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   agentId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   clientId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

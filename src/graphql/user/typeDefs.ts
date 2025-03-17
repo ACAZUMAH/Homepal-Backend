@@ -15,7 +15,7 @@ export const userTypeDefs = `#graphql
    }
 
    type User {
-      _id: ID!
+      id: ID!
       firstName: String
       lastName: String
       phoneNumber: PhoneNumber!
@@ -42,6 +42,7 @@ export const userTypeDefs = `#graphql
    }
 
    type offer {
+      _id: ID!
       propertyId: String!
       agentId: String!
       clientId: String!
@@ -62,10 +63,12 @@ export const userTypeDefs = `#graphql
    }
 
    input UpdateUserInput{
+       id: ID
        firstName: String
        lastName: String
        phone: String
        email: String
+       phoneNumber: String
        profile: String
    }
 
