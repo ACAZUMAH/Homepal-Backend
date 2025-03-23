@@ -24,9 +24,6 @@ export const userTypeDefs = `#graphql
       isAuthenticated: Boolean
       createdAt: DateTime!
       updatedAt: DateTime!
-
-      Listings: [Listing]
-
       savedProperties: [Listing]
    }
 
@@ -39,9 +36,15 @@ export const userTypeDefs = `#graphql
       videoCallMode: VideoCallMode
       contactDetails: String
       scheduledDate: DateTime
+
+      property: Listing
+
+      client: User
+
+      agent: User
    }
 
-   type offer {
+   type Offer {
       _id: ID!
       propertyId: String!
       agentId: String!
@@ -52,14 +55,17 @@ export const userTypeDefs = `#graphql
       phoneNumber: String!
       offerAmount: Int!
       message: String
+
+      property: Listing
    }
 
    extend type Query {
       me: User!
       user(id: ID!): User!
-      getUserListings: [Listing]
-      getUserRequestedTours: [TourRequest]
-      getRequestedToursOnUserProperty: [TourRequest]
+      getUserListings(filters: ListingFilters): ListingConnection
+      getRequestedTours: [TourRequest]
+      getTourRequests: [TourRequest]
+      getRecievedOffers: [Offer]
    }
 
    input UpdateUserInput{
@@ -72,7 +78,7 @@ export const userTypeDefs = `#graphql
        profile: String
    }
 
-   input createTourInput {
+   input CreateTourInput {
       propertyId: String!
       agentId: String!
       clientId: String!
@@ -82,7 +88,7 @@ export const userTypeDefs = `#graphql
       contactDetails: String!
    }
 
-   input createOfferInput {
+   input CreateOfferInput {
       propertyId: String!
       agentId: String!
       clientId: String!
@@ -98,7 +104,7 @@ export const userTypeDefs = `#graphql
        updateUser(data: UpdateUserInput): User!
        saveProperty(propertyId: String!): User!
        removeSavedProperty(propertyId: String!): User!
-       createTourRequest(data: createTourInput): TourRequest
-       createOffer(data: createOfferInput): offer
+       createTourRequest(data: CreateTourInput): TourRequest
+       createOffer(data: CreateOfferInput): Offer
    }
 `;

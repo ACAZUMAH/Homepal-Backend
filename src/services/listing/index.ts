@@ -91,7 +91,7 @@ export const getListings = async (filter: listingFilter, favoriteIds?: Types.Obj
 
     {
       $facet: {
-        listings: [{ $skip: skip }, { $limit: limit }],
+        listings: [{ $skip: skip }, { $limit: limit + 1 }],
         totalCount: [{ $count: "count" }],
       },
     },

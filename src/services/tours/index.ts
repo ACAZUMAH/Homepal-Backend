@@ -1,7 +1,9 @@
-import { createTourRequest } from "src/common/interfaces";
+import { createTourRequest, requestFilters, RequestTourDocument } from "src/common/interfaces";
 import { tourModel } from "src/models/requestTours";
 import { validateCreateTour } from "./validate-tour-data";
 import createError from "http-errors";
+import { FilterQuery, QueryOptions } from "mongoose";
+import { getPageConnection, getSanitizeLimit, getSanitizeOffset, getSanitizePage } from "src/common/helpers";
 
 /**
  * 
@@ -19,10 +21,17 @@ export const createNewTourRequest = async (data: createTourRequest) => {
 };
 
 
-export const getUserRequestedTours = () => {
+export const getUserRequestTours = async (filters: requestFilters) => {
+  const query: FilterQuery<RequestTourDocument> = {
+    ...(filters.clientId && { clientId: filters.clientId }),
+    ...(filters.agentId && { agentId: filters.agentId })
+  }
 
-}
+  const limit = getSanitizeLimit(filters.limit)
+  const page = getSanitizePage(filters.page)
+  const skip = getSanitizeOffset(limit, page)
 
-export const getRequestedToursOnUserProperty = () => {
+  const options: QueryOptions = { skip, lean: true, limit: limit + 1, sort: { createdAt: 1 } }
 
+  return await tourModel.find(query, null, options)
 }

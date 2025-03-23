@@ -22,7 +22,7 @@ export interface upsertUserInput {
 }
 
 export interface updateUserInput {
-    id: Types.ObjectId
+    id: Types.ObjectId | string | null
     firstName?: string | null
     lastName?: string | null
     email?: string | null

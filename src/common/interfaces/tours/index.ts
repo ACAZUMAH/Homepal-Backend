@@ -21,3 +21,10 @@ export interface createTourRequest {
   videoCallMode?: VideoCallMode | null;
   contactDetails: string;
 }
+
+export interface requestFilters {
+  clientId?: string | Types.ObjectId,
+  agentId?: string | Types.ObjectId
+  limit?: string | null
+  page?: string | null
+}

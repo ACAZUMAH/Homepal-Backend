@@ -20,7 +20,7 @@ export const listingTypeDef = `#graphql
         user: User!
     }
 
-    input listingFilters {
+    input ListingFilters {
         page: Int 
         limit: Int 
         sort: String
@@ -36,22 +36,22 @@ export const listingTypeDef = `#graphql
         search: String
     }
 
-    type listingConnection {
+    type ListingConnection {
         edges: [Listing!]
         PageInfo: PageInfo!
     }
 
-    type deleteResponse {
+    type DeleteResponse {
         message: String
     }
 
     extend type Query {
         listing(id: ID!): Listing!
-        listings(filters: listingFilters): listingConnection
-        getFavoriteProperties(ids: [ID!], filters: listingFilters): listingConnection
+        listings(filters: ListingFilters): ListingConnection
+        getFavoriteProperties(ids: [ID!], filters: ListingFilters): ListingConnection
     }
 
-    input createListingInput {
+    input CreateListingInput {
         name: String!
         description: String!
         address: String!
@@ -64,7 +64,7 @@ export const listingTypeDef = `#graphql
         imageUrls: [String!]!
     }
 
-    input updateListingInput {
+    input UpdateListingInput {
         id: ID!
         name: String
         description: String
@@ -79,8 +79,8 @@ export const listingTypeDef = `#graphql
     }
 
     extend type Mutation {
-        createListing(data: createListingInput): Listing!
-        updateListing(data: updateListingInput): Listing!
-        deleteListing(id: ID!): deleteResponse
+        createListing(data: CreateListingInput): Listing!
+        updateListing(data: UpdateListingInput): Listing!
+        deleteListing(id: ID!): DeleteResponse
     }
 `;

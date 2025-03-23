@@ -96,7 +96,7 @@ export const updateIsAuthenticated = async (id: Types.ObjectId | string, otp: bo
  * @throws 404 error if user not found
  */
 export const updateUser = async (data: updateUserInput) => {
-    const user = await getUserById(data.id)
+    const user = await getUserById(data.id!)
 
     const updateData = {
         ...(data.firstName && { firstName: data.firstName }),

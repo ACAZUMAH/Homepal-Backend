@@ -24,3 +24,10 @@ export interface createOffer {
   offerAmount: Number;
   message?: string | null;
 }
+
+export interface offerfilters {
+  agentId?: string | Types.ObjectId
+  clientId?: string | Types.ObjectId
+  page?: string | null
+  limit?: string | null
+}
